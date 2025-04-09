@@ -1,17 +1,17 @@
 import styled from 'styled-components';
-// 스타일 정의
+import { ButtonHTMLAttributes } from 'react';
+
 export const Container = styled.div`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  padding: 3px 20px;
+  padding: 20px;
   background-color: #fff;
 `;
 
 export const Title = styled.h2`
   font-family: 'Pretendard';
   margin-left: 10px;
-  margin-top: 30px;
-  margin-bottom: -28px;
+  margin-bottom: 15px;
   font-style: normal;
   font-weight: 500;
   font-size: 23px;
@@ -22,25 +22,23 @@ export const Title = styled.h2`
 export const ButtonGroup = styled.div`
   display: flex;
   gap: 8px;
-  width: 300px;
   margin-bottom: 20px;
-  margin-left: 918px;
+  margin-left: 1008px;
 `;
 
 export const Button = styled.button<{ active: boolean }>`
   padding: 8px 16px;
   border-radius: 6px;
-  background: ${({ active }) => (active ? '#1F2937' : '#3C4550')};
+  background: ${({ active }) => (active ? '#1F2937' : '#4B5563')};
   color: white;
   cursor: pointer;
   border: none;
 `;
 
 export const Table = styled.table`
-  width: 98%;
+  width: 100%;
   border-collapse: separate;
   border-spacing: 6px;
-  cursor: default;
 `;
 
 export const Th = styled.th`
@@ -55,6 +53,24 @@ export const Th = styled.th`
   font-size: 16px;
   line-height: 21px;
   color: #4e5a69;
+  cursor: default;
+`;
+
+interface FilterButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  $bgColor: string;
+  $textColor: string;
+  $active: boolean;
+}
+
+export const StyledFilterButton = styled.button<FilterButtonProps>`
+  background-color: ${(props) => props.$bgColor};
+  color: ${(props) => props.$textColor};
+  font-weight: ${(props) => (props.$active ? 'bold' : 'normal')};
+  border: none;
+  padding: 8px 20px;
+  margin-right: 8px;
+  border-radius: 15px;
+  cursor: pointer;
 `;
 
 export const Td = styled.td`
@@ -78,4 +94,30 @@ export const Tr = styled.tr`
 export const Checkbox = styled.input`
   width: 16px;
   height: 16px;
+`;
+export const FilterButtons = styled.div`
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+`;
+
+export const FilterButton = styled.button<{
+  bgColor: string;
+  textColor: string;
+  active?: boolean;
+}>`
+  padding: 8px 20px;
+  border: none;
+  border-radius: 999px;
+  background-color: ${({ bgColor }) => bgColor};
+  color: ${({ textColor }) => textColor};
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+
+  ${({ active }) =>
+    active &&
+    `
+    outline: 2px solid rgba(0,0,0,0.1);
+  `}
 `;

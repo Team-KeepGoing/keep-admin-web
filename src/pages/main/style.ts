@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const page_container = styled.div`
   width: 100%;
+  height: 1000px;
   max-width: 1400px; /* or 1280px, 1440px 네가 원하는 크기 */
   margin-left: 80px;
   padding: 30px 80px;
@@ -14,6 +15,7 @@ export const title = styled.h3`
   font-weight: 500;
   font-size: 30px;
   line-height: 36px;
+  cursor: default;
   color: #2a2a2c;
 `;
 
@@ -26,6 +28,7 @@ export const endText = styled.h5`
   color: #b0b9c2;
   text-align: right;
   margin-top: auto;
+  cursor: default;
 `;
 
 export const dddiiivvv = styled.div`
@@ -52,6 +55,7 @@ export const Danger = styled.img`
   display: flex;
   padding-left: 30px;
   padding-top: 28px;
+  cursor: default;
 `;
 export const Text1 = styled.h5`
   position: absolute;
@@ -63,6 +67,7 @@ export const Text1 = styled.h5`
   font-size: 21px;
   display: flex;
   color: #5e9989;
+  cursor: default;
 `;
 export const Text2 = styled.h5`
   font-family: 'Pretendard';
@@ -75,6 +80,7 @@ export const Text2 = styled.h5`
   color: #2a2a2c;
   left: 158px;
   bottom: -7px;
+  cursor: default;
 `;
 export const Spantag = styled.span`
   font-family: 'Pretendard';
@@ -86,4 +92,5 @@ export const Spantag = styled.span`
   margin-left: 1100px;
   margin-top: -58px;
   color: #5e9989;
+  cursor: pointer;
 `;

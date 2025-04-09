@@ -37,7 +37,7 @@ export const Badge = styled.div<{ textColor: string; bgColor: string }>`
   font-size: 30px;
   line-height: 36px;
   text-align: center;
-
+  cursor: default;
   color: ${(props) => props.textColor};
 `;
 
@@ -53,6 +53,7 @@ export const Label = styled.div`
   font-size: 19px;
   line-height: 24px;
   color: #3c4550;
+  cursor: default;
 `;
 
 export const NoWrap = styled.div`
