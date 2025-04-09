@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import * as S from './style';
 
 type Device = {
@@ -6,97 +7,94 @@ type Device = {
   name: string;
   serial: string;
   registerDate: string;
-  status: '사용 중' | '사용 가능';
+  status: '사용 중' | '사용 가능' | '사용 불가';
   days: string;
 };
 
-const dummyData: Device[] = [
-  {
-    id: 1,
-    name: '아이패드 #1 (가칭)',
-    serial: '43211503-21191751',
-    registerDate: '2024.12.25',
-    status: '사용 중',
-    days: '9 일',
-  },
-  {
-    id: 2,
-    name: '아이패드 #2 (가칭)',
-    serial: '43211503-21191751',
-    registerDate: '2024.12.25',
-    status: '사용 가능',
-    days: '- 일',
-  },
-  {
-    id: 3,
-    name: '애플펜슬 #1 (가칭)',
-    serial: '43211503-21191751',
-    registerDate: '2024.12.25',
-    status: '사용 중',
-    days: '2 일',
-  },
-  {
-    id: 4,
-    name: '애플펜슬 #2 (가칭)',
-    serial: '43211503-21191751',
-    registerDate: '2024.12.25',
-    status: '사용 중',
-    days: '15 일',
-  },
-  {
-    id: 5,
-    name: '그램 #1 (가칭)',
-    serial: '43211503-21191751',
-    registerDate: '2024.12.25',
-    status: '사용 가능',
-    days: '- 일',
-  },
-  {
-    id: 6,
-    name: '그램 #2 (가칭)',
-    serial: '43211503-21191751',
-    registerDate: '2024.12.25',
-    status: '사용 가능',
-    days: '- 일',
-  },
-  {
-    id: 7,
-    name: '아두이노 #1 (가칭)',
-    serial: '43211503-21191751',
-    registerDate: '2024.12.25',
-    status: '사용 가능',
-    days: '- 일',
-  },
-];
+type DeviceApiResponse = {
+  id: number;
+  item: string;
+  serialNumber: string;
+  acquisitionDate: string;
+  price: string;
+  rentedBy: string | null;
+  place: string;
+  returnDate: string | null;
+  rentalDate: string | null;
+  usageDate: string | null;
+  status: 'AVAILABLE' | 'UNAVAILABLE' | string;
+};
 
 const DeviceTable: React.FC = () => {
-  const [filter, setFilter] = useState<'전체' | '사용 중' | '사용 가능'>(
-    '전체',
-  );
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [filter, setFilter] = useState<
+    '전체' | '사용 중' | '사용 가능' | '사용 불가'
+  >('전체');
+
+  useEffect(() => {
+    axios
+      .get('http://15.165.16.79:8080/teacher/item/list')
+      .then((res) => {
+        const fetched = res.data.data.map(
+          (item: DeviceApiResponse): Device => ({
+            id: item.id,
+            name: item.item,
+            serial: item.serialNumber,
+            registerDate: new Date(item.acquisitionDate).toLocaleDateString(
+              'ko-KR',
+            ),
+            status: convertStatus(item.status),
+            days: calculateDays(item.rentalDate),
+          }),
+        );
+        setDevices(fetched);
+      })
+      .catch((err) => {
+        console.error('서버 요청 실패:', err);
+      });
+  }, []);
+
+  const convertStatus = (status: string): Device['status'] => {
+    switch (status) {
+      case 'AVAILABLE':
+        return '사용 가능';
+      case 'UNAVAILABLE':
+        return '사용 불가';
+      default:
+        return '사용 중';
+    }
+  };
+
+  const calculateDays = (rentalDate: string | null): string => {
+    if (!rentalDate) return '- 일';
+
+    const start = new Date(rentalDate);
+    const now = new Date();
+    const diffTime = now.getTime() - start.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    return `${diffDays} 일`;
+  };
 
   const filteredData =
     filter === '전체'
-      ? dummyData
-      : dummyData.filter((device) => device.status === filter);
+      ? devices
+      : devices.filter((device) => device.status === filter);
 
   return (
     <S.Container>
       <S.Title>관리 물품 현황</S.Title>
-
-      {/* 필터 버튼 */}
       <S.ButtonGroup>
-        {['사용 중', '사용 가능'].map((status) => (
+        {['사용 중', '사용 가능', '사용 불가'].map((status) => (
           <S.Button
             key={status}
             active={filter === status}
-            onClick={() => setFilter(status as '사용 중' | '사용 가능')}
+            onClick={() => setFilter(status as Device['status'])}
           >
             {status}
           </S.Button>
         ))}
       </S.ButtonGroup>
 
-      {/* 테이블 */}
       <S.Table>
         <thead>
           <tr>
@@ -110,9 +108,9 @@ const DeviceTable: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredData.map((device) => (
+          {filteredData.map((device, index) => (
             <S.Tr key={device.id}>
-              <S.Td>{device.id}</S.Td>
+              <S.Td>{index + 1}</S.Td>
               <S.Td>{device.name}</S.Td>
               <S.Td>{device.serial}</S.Td>
               <S.Td>{device.registerDate}</S.Td>
