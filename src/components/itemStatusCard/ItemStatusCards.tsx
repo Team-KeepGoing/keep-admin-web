@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import * as S from './style';
 
 interface ItemCountData {
@@ -7,14 +8,6 @@ interface ItemCountData {
   inUseItems: number;
   unavailableItems: number;
 }
-
-// ✅ 더미 데이터
-const dummyData: ItemCountData = {
-  totalItems: 86,
-  availableItems: 24,
-  inUseItems: 62,
-  unavailableItems: 14,
-};
 
 const statusList = [
   {
@@ -44,14 +37,30 @@ const statusList = [
 ];
 
 const ItemStatusCards = () => {
-  const data = dummyData;
+  const [data, setData] = useState<ItemCountData>({
+    totalItems: 0,
+    availableItems: 0,
+    inUseItems: 0,
+    unavailableItems: 0,
+  });
+
+  useEffect(() => {
+    axios
+      .get('http://15.165.16.79:8080/teacher/item/count')
+      .then((res) => {
+        setData(res.data.data); // 응답에서 data 추출
+      })
+      .catch((err) => {
+        console.error('카운트 데이터 불러오기 실패:', err);
+      });
+  }, []);
 
   return (
     <S.CardContainer>
       {statusList.map((status) => {
         const words = status.label.split(' ');
-        const firstLine = words.slice(0, 2).join(' '); // 앞 2단어
-        const secondLine = words.slice(2).join(' '); // 나머지
+        const firstLine = words.slice(0, 2).join(' ');
+        const secondLine = words.slice(2).join(' ');
 
         return (
           <S.Card key={status.key}>
